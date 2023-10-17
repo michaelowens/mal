@@ -148,3 +148,5 @@ elm/*.js
 !elm/bootstrap.js
 wasm/*.wat
 wasm/*.wasm
+zig/zig-cache
+zig/zig-out
