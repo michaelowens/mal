@@ -1,0 +1,13 @@
+.{
+    .name = "mal",
+    .version = "0.0.1",
+
+    .dependencies = .{
+        .linenoise = .{
+            // the url to the release of the module
+            .url = "https://github.com/joachimschmidt557/linenoize/archive/refs/heads/master.tar.gz",
+            // the hash of the module, this is not the checksum of the tarball
+            .hash = "1220aa9878b4bfa6a70a10793ae8ad42ea7cb1bbd1394c78613c3a9480aae0694d79",
+        },
+    },
+}
