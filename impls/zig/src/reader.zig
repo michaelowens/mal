@@ -113,20 +113,20 @@ pub const Reader = struct {
     tokens: std.ArrayList(Token),
     index: usize = 0,
 
-    pub fn init(tokens: std.ArrayList(Token), allocator: std.mem.Allocator) Self {
+    pub fn init(allocator: std.mem.Allocator, tokens: std.ArrayList(Token)) Self {
         return .{
             .tokens = tokens,
             .allocator = allocator,
         };
     }
 
-    pub fn initFromString(input: []const u8, allocator: std.mem.Allocator) !Value {
-        var tokens = try Reader.tokenize(input, allocator);
-        var reader = Reader.init(tokens, allocator);
+    pub fn initFromString(allocator: std.mem.Allocator, input: []const u8) !Value {
+        var tokens = try Reader.tokenize(allocator, input);
+        var reader = Reader.init(allocator, tokens);
         return try reader.read_form();
     }
 
-    pub fn tokenize(input: []const u8, allocator: std.mem.Allocator) !std.ArrayList(Token) {
+    pub fn tokenize(allocator: std.mem.Allocator, input: []const u8) !std.ArrayList(Token) {
         var tokenizer = Tokenizer.init(input);
         var tokens = std.ArrayList(Token).init(allocator);
         while (tokenizer.next()) |token| {
@@ -274,7 +274,6 @@ pub const Reader = struct {
         try result.List.append(Value{ .Symbol = "with-meta" });
         try result.List.append(meta);
         try result.List.append(value);
-        // try result.List.append(hm);
         return result;
     }
 

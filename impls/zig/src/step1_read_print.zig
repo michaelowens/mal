@@ -5,22 +5,22 @@ const Tokenizer = @import("./reader.zig").Tokenizer;
 const Value = @import("./types.zig").Value;
 const pr_str = @import("./printer.zig").pr_str;
 
-fn READ(input: []const u8, allocator: std.mem.Allocator) !Value {
-    return try Reader.initFromString(input, allocator);
+fn READ(allocator: std.mem.Allocator, input: []const u8) !Value {
+    return try Reader.initFromString(allocator, input);
 }
 
 fn EVAL(input: Value) Value {
     return input;
 }
 
-fn PRINT(input: Value, allocator: std.mem.Allocator) ![]const u8 {
-    return pr_str(input, allocator);
+fn PRINT(allocator: std.mem.Allocator, input: Value) ![]const u8 {
+    return pr_str(allocator, input);
 }
 
-fn rep(input: []const u8, allocator: std.mem.Allocator) ![]const u8 {
-    var ast = try READ(input, allocator);
+fn rep(allocator: std.mem.Allocator, input: []const u8) ![]const u8 {
+    var ast = try READ(allocator, input);
     var result = EVAL(ast);
-    return try PRINT(result, allocator);
+    return try PRINT(allocator, result);
 }
 
 pub fn main() !void {
@@ -37,7 +37,7 @@ pub fn main() !void {
 
     while (try ln.linenoise("user> ")) |input| {
         // defer allocator.free(input);
-        try stdout.print("{s}\n", .{try rep(input, allocator)});
+        try stdout.print("{s}\n", .{try rep(allocator, input)});
         try bw.flush();
         try ln.history.add(input);
     }

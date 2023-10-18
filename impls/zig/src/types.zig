@@ -24,7 +24,7 @@ pub const HashMapContext = struct {
         var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
         defer arena.deinit();
         const allocator = arena.allocator();
-        const s = pr_str(v, allocator) catch "";
+        const s = pr_str(allocator, v) catch "";
         return std.hash.Wyhash.hash(0, s);
     }
 
@@ -33,8 +33,8 @@ pub const HashMapContext = struct {
         var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
         defer arena.deinit();
         const allocator = arena.allocator();
-        const a_str = pr_str(a, allocator) catch return false;
-        const b_str = pr_str(b, allocator) catch return false;
+        const a_str = pr_str(allocator, a) catch return false;
+        const b_str = pr_str(allocator, b) catch return false;
         return std.mem.eql(u8, a_str, b_str);
     }
 };

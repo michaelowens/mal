@@ -2,7 +2,7 @@ const std = @import("std");
 const Value = @import("./types.zig").Value;
 const ValueTag = @import("./types.zig").ValueTag;
 
-pub fn pr_str(value: Value, allocator: std.mem.Allocator) ![]const u8 {
+pub fn pr_str(allocator: std.mem.Allocator, value: Value) ![]const u8 {
     return switch (value) {
         ValueTag.List => |list| blk: {
             var result = std.ArrayList(u8).init(allocator);
@@ -11,7 +11,7 @@ pub fn pr_str(value: Value, allocator: std.mem.Allocator) ![]const u8 {
 
             try result.append('(');
             for (list.items) |item| {
-                _ = try result.writer().write(try pr_str(item, allocator));
+                _ = try result.writer().write(try pr_str(allocator, item));
                 try result.append(' ');
             }
             if (result.items.len > 1) {
@@ -28,7 +28,7 @@ pub fn pr_str(value: Value, allocator: std.mem.Allocator) ![]const u8 {
 
             try result.append('[');
             for (list.items) |item| {
-                _ = try result.writer().write(try pr_str(item, allocator));
+                _ = try result.writer().write(try pr_str(allocator, item));
                 try result.append(' ');
             }
             if (result.items.len > 1) {
@@ -46,9 +46,9 @@ pub fn pr_str(value: Value, allocator: std.mem.Allocator) ![]const u8 {
             try result.append('{');
             var it = map.iterator();
             while (it.next()) |kv| {
-                _ = try result.writer().write(try pr_str(kv.key_ptr.*, allocator));
+                _ = try result.writer().write(try pr_str(allocator, kv.key_ptr.*));
                 try result.append(' ');
-                _ = try result.writer().write(try pr_str(kv.value_ptr.*, allocator));
+                _ = try result.writer().write(try pr_str(allocator, kv.value_ptr.*));
                 try result.append(' ');
             }
             if (result.items.len > 1) {
