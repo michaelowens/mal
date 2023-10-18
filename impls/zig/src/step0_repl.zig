@@ -1,19 +1,19 @@
 const std = @import("std");
 const Linenoise = @import("linenoise").Linenoise;
 
-fn READ(input: []u8) []u8 {
+fn READ(input: []const u8) []const u8 {
     return input;
 }
 
-fn EVAL(input: []u8) []u8 {
+fn EVAL(input: []const u8) []const u8 {
     return input;
 }
 
-fn PRINT(input: []u8) []u8 {
+fn PRINT(input: []const u8) []const u8 {
     return input;
 }
 
-fn rep(input: []u8) []u8 {
+fn rep(input: []const u8) []const u8 {
     var ast = READ(input);
     var result = EVAL(ast);
     return PRINT(result);
@@ -31,7 +31,7 @@ pub fn main() !void {
 
     while (try ln.linenoise("user> ")) |input| {
         defer allocator.free(input);
-        try stdout.print("{s}\n", .{input});
+        try stdout.print("{s}\n", .{rep(input)});
         try bw.flush();
         try ln.history.add(input);
     }

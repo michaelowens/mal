@@ -22,12 +22,12 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
         }),
-        // b.addExecutable(.{
-        //     .name = "step1_read_print",
-        //     .root_source_file = .{ .path = "src/step1_read_print.zig" },
-        //     .target = target,
-        //     .optimize = optimize,
-        // }),
+        b.addExecutable(.{
+            .name = "step1_read_print",
+            .root_source_file = .{ .path = "src/step1_read_print.zig" },
+            .target = target,
+            .optimize = optimize,
+        }),
         // b.addExecutable(.{
         //     .name = "step2_eval",
         //     .root_source_file = .{ .path = "src/step2_eval.zig" },
