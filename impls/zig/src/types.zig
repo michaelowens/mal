@@ -2,7 +2,7 @@ const std = @import("std");
 const pr_str = @import("./printer.zig").pr_str;
 
 pub const ValueTag = enum {
-    Number,
+    Integer,
     Symbol,
     List,
     Vector,
@@ -10,7 +10,7 @@ pub const ValueTag = enum {
 };
 
 pub const Value = union(ValueTag) {
-    Number: isize,
+    Integer: isize,
     Symbol: []const u8,
     List: std.ArrayList(Value),
     Vector: std.ArrayList(Value),

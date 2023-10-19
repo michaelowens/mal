@@ -58,7 +58,7 @@ pub fn pr_str(allocator: std.mem.Allocator, value: Value) ![]const u8 {
             }
             break :blk result.items;
         },
-        ValueTag.Number => |i| try std.fmt.allocPrint(allocator, "{d}", .{i}),
+        ValueTag.Integer => |i| try std.fmt.allocPrint(allocator, "{d}", .{i}),
         ValueTag.Symbol => |str| str,
     };
 }

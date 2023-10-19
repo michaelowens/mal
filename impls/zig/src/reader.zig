@@ -282,7 +282,7 @@ pub const Reader = struct {
         return switch (t[0]) {
             '0'...'1' => blk: {
                 var i = std.fmt.parseInt(isize, t, 10) catch return ReaderErrors.ParseIntError;
-                break :blk Value{ .Number = i };
+                break :blk Value{ .Integer = i };
             },
             else => return Value{ .Symbol = t },
         };
