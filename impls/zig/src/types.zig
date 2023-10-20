@@ -1,12 +1,29 @@
 const std = @import("std");
 const pr_str = @import("./printer.zig").pr_str;
 
+pub const MalError = error{
+    InvalidArgumentCount,
+    InvalidArgumentType,
+    InvalidSymbol,
+    Overflow,
+    DivisionError,
+
+    // Reader
+    ReadFormError,
+    ReadAtomError,
+    ReadQuotedValueError,
+    ReadWithMetaError,
+    ParseIntError,
+    OutOfMemory,
+};
+
 pub const ValueTag = enum {
     Integer,
     Symbol,
     List,
     Vector,
     HashMap,
+    Fn,
 };
 
 pub const Value = union(ValueTag) {
@@ -15,6 +32,7 @@ pub const Value = union(ValueTag) {
     List: std.ArrayList(Value),
     Vector: std.ArrayList(Value),
     HashMap: std.HashMap(Value, Value, HashMapContext, std.hash_map.default_max_load_percentage),
+    Fn: *const fn (args: std.ArrayList(Value)) MalError!Value, // TODO: find way to get rid of ArrayList
 };
 
 pub const HashMapContext = struct {

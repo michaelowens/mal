@@ -28,12 +28,12 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
         }),
-        // b.addExecutable(.{
-        //     .name = "step2_eval",
-        //     .root_source_file = .{ .path = "src/step2_eval.zig" },
-        //     .target = target,
-        //     .optimize = optimize,
-        // }),
+        b.addExecutable(.{
+            .name = "step2_eval",
+            .root_source_file = .{ .path = "src/step2_eval.zig" },
+            .target = target,
+            .optimize = optimize,
+        }),
         // b.addExecutable(.{
         //     .name = "step3_env",
         //     .root_source_file = .{ .path = "src/step3_env.zig" },

@@ -1,4 +1,5 @@
 const std = @import("std");
+const MalError = @import("./types.zig").MalError;
 const Value = @import("./types.zig").Value;
 const HashMapContext = @import("./types.zig").HashMapContext;
 
@@ -97,15 +98,6 @@ pub const Tokenizer = struct {
     }
 };
 
-const ReaderErrors = error{
-    ReadFormError,
-    ReadAtomError,
-    ReadQuotedValueError,
-    ReadWithMetaError,
-    ParseIntError,
-    OutOfMemory,
-};
-
 pub const Reader = struct {
     const Self = @This();
 
@@ -135,7 +127,7 @@ pub const Reader = struct {
         return tokens;
     }
 
-    pub fn read_form(self: *Self) ReaderErrors!Value {
+    pub fn read_form(self: *Self) MalError!Value {
         var c = self.peek() orelse return error.ReadFormError;
         return switch (c[0]) {
             '(' => self.read_list(),
@@ -147,7 +139,7 @@ pub const Reader = struct {
         };
     }
 
-    pub fn read_list(self: *Self) ReaderErrors!Value {
+    pub fn read_list(self: *Self) MalError!Value {
         _ = self.next(); // consume '('
 
         var value = Value{
@@ -167,7 +159,7 @@ pub const Reader = struct {
         return value;
     }
 
-    pub fn read_vector(self: *Self) ReaderErrors!Value {
+    pub fn read_vector(self: *Self) MalError!Value {
         _ = self.next(); // consume '['
 
         var value = Value{
@@ -187,7 +179,7 @@ pub const Reader = struct {
         return value;
     }
 
-    pub fn read_hash_map(self: *Self) ReaderErrors!Value {
+    pub fn read_hash_map(self: *Self) MalError!Value {
         _ = self.next(); // consume '{'
 
         var value = Value{
@@ -219,8 +211,8 @@ pub const Reader = struct {
         return value;
     }
 
-    pub fn read_quoted_value(self: *Self) ReaderErrors!Value {
-        var t = self.peek() orelse return ReaderErrors.ReadQuotedValueError;
+    pub fn read_quoted_value(self: *Self) MalError!Value {
+        var t = self.peek() orelse return MalError.ReadQuotedValueError;
         switch (t[0]) {
             '\'' => {
                 _ = self.next(); // consume "'"
@@ -265,11 +257,11 @@ pub const Reader = struct {
         }
     }
 
-    pub fn read_with_meta(self: *Self) ReaderErrors!Value {
+    pub fn read_with_meta(self: *Self) MalError!Value {
         _ = self.next(); // consume '^'
 
-        var value = self.read_form() catch return ReaderErrors.ReadWithMetaError;
-        var meta = self.read_form() catch return ReaderErrors.ReadWithMetaError;
+        var value = self.read_form() catch return MalError.ReadWithMetaError;
+        var meta = self.read_form() catch return MalError.ReadWithMetaError;
         var result = Value{ .List = std.ArrayList(Value).init(self.allocator) };
         try result.List.append(Value{ .Symbol = "with-meta" });
         try result.List.append(meta);
@@ -277,11 +269,14 @@ pub const Reader = struct {
         return result;
     }
 
-    pub fn read_atom(self: *Self) ReaderErrors!Value {
-        var t = self.next() orelse return ReaderErrors.ReadAtomError;
+    pub fn read_atom(self: *Self) MalError!Value {
+        var t = self.next() orelse return MalError.ReadAtomError;
         return switch (t[0]) {
-            '0'...'1' => blk: {
-                var i = std.fmt.parseInt(isize, t, 10) catch return ReaderErrors.ParseIntError;
+            '0'...'9', '-' => blk: {
+                if (t[0] == '-' and t.len == 1) {
+                    break :blk Value{ .Symbol = t };
+                }
+                var i = std.fmt.parseInt(isize, t, 10) catch return MalError.ParseIntError;
                 break :blk Value{ .Integer = i };
             },
             else => return Value{ .Symbol = t },
